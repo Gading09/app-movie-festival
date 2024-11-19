@@ -10,7 +10,7 @@ import (
 func main() {
 	container := container.SetupContainer()
 	handler := http.SetupHandler(container)
-	http := http.ServeHttp(handler, container.Database)
+	http := http.ServeHttp(handler, container.Database, container.Cache)
 	err := http.Listen(fmt.Sprintf(":%d", container.EnvironmentConfig.Port))
 
 	if err != nil {

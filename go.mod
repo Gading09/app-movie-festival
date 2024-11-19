@@ -19,6 +19,7 @@ require (
 )
 
 require (
+	github.com/allegro/bigcache/v3 v3.1.0
 	github.com/go-sql-driver/mysql v1.7.0 // indirect
 	github.com/gofiber/fiber/v2 v2.52.5
 	github.com/jinzhu/inflection v1.0.0 // indirect
