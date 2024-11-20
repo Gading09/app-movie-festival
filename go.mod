@@ -7,7 +7,9 @@ require gorm.io/driver/mysql v1.5.7
 require (
 	github.com/andybalholm/brotli v1.0.5 // indirect
 	github.com/gabriel-vasile/mimetype v1.4.3 // indirect
+	github.com/gofiber/utils v0.0.10 // indirect
 	github.com/google/uuid v1.5.0 // indirect
+	github.com/gorilla/schema v1.1.0 // indirect
 	github.com/klauspost/compress v1.17.0 // indirect
 	github.com/leodido/go-urn v1.4.0 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect

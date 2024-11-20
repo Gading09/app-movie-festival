@@ -6,5 +6,8 @@ import (
 )
 
 func RegisterPath(app *fiber.App, h Handler, cache *bigcache.BigCache) {
-
+	user := app.Group("/user")
+	{
+		user.Post("/registration", h.UserHandler.RegisterUser)
+	}
 }
