@@ -20,6 +20,7 @@ import (
 
 type MovieHandler interface {
 	CreateMovie(c *fiber.Ctx) error
+	UpdateMovie(c *fiber.Ctx) error
 }
 
 type movieHandler struct {
@@ -84,6 +85,63 @@ func (handler movieHandler) CreateMovie(c *fiber.Ctx) error {
 	movie.WatchUrl = videoPath
 	movie.Id = id
 	err = handler.Feature.CreateMovieFeature(movie)
+	if err != nil {
+		return response.ResponseError(c, err)
+	}
+	return response.ResponseOK(c, http.StatusCreated, constant.CreateSuccess, nil)
+}
+
+func (handler movieHandler) UpdateMovie(c *fiber.Ctx) error {
+	movie := new(model.ReqUpdateMovie)
+	movie.Id = c.Params("movieId")
+	form, err := c.MultipartForm()
+	if err != nil {
+		return err
+	}
+	jsonString := form.Value["movie"][0]
+	if err = json.Unmarshal([]byte(jsonString), &movie); err != nil {
+		return err
+	}
+	files := form.File["video"]
+	if len(files) != 0 {
+		file := files[0]
+		ext := filepath.Ext(file.Filename)
+		if ext != ".mp4" && ext != ".avi" && ext != ".mov" {
+			err = e.New(constant.StatusBadRequest, constant.ErrInvalidRequest, err)
+			return response.ResponseError(c, err)
+		}
+		src, err := file.Open()
+		if err != nil {
+			err = e.New(constant.StatusBadRequest, constant.ErrInvalidRequest, err)
+			return response.ResponseError(c, err)
+		}
+		err = os.Remove(movie.WatchUrl)
+		if err != nil {
+			err = e.New(constant.StatusBadRequest, constant.ErrInvalidRequest, err)
+			return response.ResponseError(c, err)
+		}
+		newFile, err := os.Create(movie.WatchUrl)
+		if err != nil {
+			err = e.New(constant.StatusBadRequest, constant.ErrInvalidRequest, err)
+			return response.ResponseError(c, err)
+		}
+		defer newFile.Close()
+		if _, err = io.Copy(newFile, src); err != nil {
+			return err
+		}
+		defer src.Close()
+	}
+
+	if err, check := validator.Validation(movie); check {
+		err = e.New(constant.StatusBadRequest, constant.ErrValidator, err)
+		return response.ResponseError(c, err)
+	}
+
+	if err, check := validator.Validation(movie); check {
+		err = e.New(constant.StatusBadRequest, constant.ErrValidator, err)
+		return response.ResponseError(c, err)
+	}
+	err = handler.Feature.UpdateMovieFeature(movie)
 	if err != nil {
 		return response.ResponseError(c, err)
 	}
