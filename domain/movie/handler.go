@@ -25,6 +25,7 @@ type MovieHandler interface {
 	GetListMovie(c *fiber.Ctx) error
 	GetListMovieBySearch(c *fiber.Ctx) error
 	WatchMovie(c *fiber.Ctx) error
+	Video(c *fiber.Ctx) error
 }
 
 type movieHandler struct {
@@ -188,4 +189,9 @@ func (handler movieHandler) WatchMovie(c *fiber.Ctx) error {
 		return response.ResponseError(c, err)
 	}
 	return response.ResponseOK(c, http.StatusCreated, constant.CreateSuccess, data)
+}
+
+func (handler movieHandler) Video(c *fiber.Ctx) error {
+	videoPath := c.Params("*")
+	return c.SendFile("uploads/" + videoPath)
 }

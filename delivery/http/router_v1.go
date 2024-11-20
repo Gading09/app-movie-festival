@@ -28,4 +28,6 @@ func RegisterPath(app *fiber.App, h Handler, cache *bigcache.BigCache) {
 		movie.Get("/search", h.MovieHandler.GetListMovieBySearch)
 		movie.Get("/:movieId/watch", h.MovieHandler.WatchMovie)
 	}
+
+	app.Get("/video/*", h.MovieHandler.Video)
 }
