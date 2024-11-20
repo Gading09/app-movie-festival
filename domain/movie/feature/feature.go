@@ -11,6 +11,7 @@ import (
 type MovieFeature interface {
 	CreateMovieFeature(request *model.ReqMovie) (err error)
 	UpdateMovieFeature(request *model.ReqUpdateMovie) (err error)
+	TopViewedMovieFeature() (res model.TopViewed, err error)
 }
 
 type movieFeature struct {
@@ -129,4 +130,8 @@ func (feature movieFeature) UpdateMovieFeature(request *model.ReqUpdateMovie) (e
 		movieGenre,
 		movieArtist,
 	)
+}
+
+func (feature movieFeature) TopViewedMovieFeature() (res model.TopViewed, err error) {
+	return feature.Repository.TopViewedMovieRepository()
 }

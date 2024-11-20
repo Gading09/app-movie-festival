@@ -19,5 +19,6 @@ func RegisterPath(app *fiber.App, h Handler, cache *bigcache.BigCache) {
 	{
 		admin.Post("/movie", middleware.CheckTokenExpire(cache), middleware.IsAdmin(), h.MovieHandler.CreateMovie)
 		admin.Put("/movie/:movieId", middleware.CheckTokenExpire(cache), middleware.IsAdmin(), h.MovieHandler.UpdateMovie)
+		admin.Get("/top-viewed", middleware.CheckTokenExpire(cache), middleware.IsAdmin(), h.MovieHandler.TopViewedMovie)
 	}
 }

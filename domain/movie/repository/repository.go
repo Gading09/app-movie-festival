@@ -25,6 +25,7 @@ type MovieRepository interface {
 		movieGenre []model.MovieGenres,
 		movieArtist []model.MovieArtists,
 	) (err error)
+	TopViewedMovieRepository() (res model.TopViewed, err error)
 }
 
 type movieRepository struct {
@@ -164,5 +165,41 @@ func (repo movieRepository) UpdateMovieRepository(
 		return err
 	}
 
+	return
+}
+
+func (repo movieRepository) TopViewedMovieRepository() (res model.TopViewed, err error) {
+	var mostVotedMovie model.MostVotedMovie
+	var mostViewedGenre model.MostViewedGenre
+
+	movieResult := repo.Database.Table("votes").
+		Select("movie_id, movies.title, count(*) as voted").
+		Group("movie_id").
+		Order("voted DESC").
+		Limit(1).
+		Joins("JOIN movies ON movies.id = votes.movie_id").
+		Scan(&mostVotedMovie)
+
+	if movieResult.Error != nil {
+		err = e.New(constant.StatusInternalServerError, constant.ErrDatabase, err)
+		return
+	}
+	genreResult := repo.Database.Table("movie_genres").
+		Select("genres.id as genre_id, genres.name as name, SUM(movies.view_count) as view_count").
+		Joins("JOIN genres ON genres.id = movie_genres.genre_id").
+		Joins("JOIN movies ON movies.id = movie_genres.movie_id").
+		Group("genres.id, genres.name").
+		Order("view_count DESC").
+		Limit(1).
+		Scan(&mostViewedGenre)
+
+	if genreResult.Error != nil {
+		err = e.New(constant.StatusInternalServerError, constant.ErrDatabase, err)
+		return
+	}
+	res = model.TopViewed{
+		Movie: mostVotedMovie,
+		Genre: mostViewedGenre,
+	}
 	return
 }

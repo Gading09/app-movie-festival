@@ -21,6 +21,7 @@ import (
 type MovieHandler interface {
 	CreateMovie(c *fiber.Ctx) error
 	UpdateMovie(c *fiber.Ctx) error
+	TopViewedMovie(c *fiber.Ctx) error
 }
 
 type movieHandler struct {
@@ -146,4 +147,12 @@ func (handler movieHandler) UpdateMovie(c *fiber.Ctx) error {
 		return response.ResponseError(c, err)
 	}
 	return response.ResponseOK(c, http.StatusCreated, constant.CreateSuccess, nil)
+}
+
+func (handler movieHandler) TopViewedMovie(c *fiber.Ctx) error {
+	data, err := handler.Feature.TopViewedMovieFeature()
+	if err != nil {
+		return response.ResponseError(c, err)
+	}
+	return response.ResponseOK(c, http.StatusOK, constant.GetSuccess, data)
 }
