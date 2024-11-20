@@ -18,6 +18,7 @@ type MovieFeature interface {
 	GetListMovieBySearchFeature(search string) (res model.ResGetListMovieBySearch, err error)
 	WatchMovieFeature(id string) (res model.WatchMovie, err error)
 	VoteMovieFeature(userId, movieId string) (err error)
+	UnvoteMovieFeature(userId, movieId string) (err error)
 }
 
 type movieFeature struct {
@@ -196,5 +197,12 @@ func (feature movieFeature) VoteMovieFeature(userId, movieId string) (err error)
 		UserId:    userId,
 		MovieId:   movieId,
 		CreatedAt: time.Now(),
+	})
+}
+
+func (feature movieFeature) UnvoteMovieFeature(userId, movieId string) (err error) {
+	return feature.Repository.UnvoteMovieRepository(model.Vote{
+		UserId:  userId,
+		MovieId: movieId,
 	})
 }

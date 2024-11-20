@@ -33,6 +33,7 @@ type MovieRepository interface {
 	GetMovieByIdRepository(id string) (res model.Movie, err error)
 	IncViewMovieRepository(id string) (err error)
 	VoteMovieRepository(payload model.Vote) (err error)
+	UnvoteMovieRepository(payload model.Vote) (err error)
 }
 
 type movieRepository struct {
@@ -323,5 +324,13 @@ func (repo movieRepository) VoteMovieRepository(payload model.Vote) (err error) 
 		return
 	}
 
+	return
+}
+
+func (repo movieRepository) UnvoteMovieRepository(payload model.Vote) (err error) {
+	if err = repo.Database.Where("user_id = ? AND movie_id = ?", payload.UserId, payload.MovieId).Delete(model.Vote{}).Error; err != nil {
+		err = e.New(constant.StatusInternalServerError, constant.ErrDatabase, err)
+		return
+	}
 	return
 }
