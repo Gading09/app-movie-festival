@@ -19,3 +19,8 @@ type ReqUpdateMovie struct {
 	Artists     []string `json:"artists" validate:"required"`
 	WatchUrl    string   `json:"url" validate:"required"`
 }
+
+type ReqGetListMovie struct {
+	Page  int `json:"page" validate:"required"`
+	Limit int `json:"limit" validate:"required"`
+}

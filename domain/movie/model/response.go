@@ -1,5 +1,7 @@
 package model
 
+import "time"
+
 type MostVotedMovie struct {
 	MovieId string `json:"movie_id"`
 	Title   string `json:"title"`
@@ -15,4 +17,25 @@ type MostViewedGenre struct {
 type TopViewed struct {
 	Movie MostVotedMovie  `json:"most_voted_movie"`
 	Genre MostViewedGenre `json:"most_viewed_genre"`
+}
+
+type GetListMovie struct {
+	Id          string    `json:"id"`
+	Title       string    `json:"title"`
+	Genre       []string  `json:"genres"`
+	Artist      []string  `json:"artits"`
+	Description string    `json:"description"`
+	CreatedAt   time.Time `json:"created_at"`
+}
+
+type Pagination struct {
+	Limit     int `json:"limit_per_page"`
+	Page      int `json:"current_page"`
+	TotalPage int `json:"total_page"`
+	TotalRows int `json:"total_rows"`
+}
+
+type ResGetListMovie struct {
+	Pagination Pagination     `json:"pagination"`
+	Data       []GetListMovie `json:"data"`
 }

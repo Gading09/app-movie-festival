@@ -3,6 +3,7 @@ package feature
 import (
 	"movie-festival/domain/movie/model"
 	"movie-festival/domain/movie/repository"
+	"movie-festival/helper"
 	"time"
 
 	"github.com/google/uuid"
@@ -12,6 +13,7 @@ type MovieFeature interface {
 	CreateMovieFeature(request *model.ReqMovie) (err error)
 	UpdateMovieFeature(request *model.ReqUpdateMovie) (err error)
 	TopViewedMovieFeature() (res model.TopViewed, err error)
+	GetListMovieFeature(request *model.ReqGetListMovie) (res model.ResGetListMovie, err error)
 }
 
 type movieFeature struct {
@@ -134,4 +136,26 @@ func (feature movieFeature) UpdateMovieFeature(request *model.ReqUpdateMovie) (e
 
 func (feature movieFeature) TopViewedMovieFeature() (res model.TopViewed, err error) {
 	return feature.Repository.TopViewedMovieRepository()
+}
+
+func (feature movieFeature) GetListMovieFeature(request *model.ReqGetListMovie) (res model.ResGetListMovie, err error) {
+	totalData, err := feature.Repository.GetTotalDataRepository()
+	if err != nil {
+		return
+	}
+
+	offset, totalPage := helper.GetPaginations(int(totalData), request.Limit, request.Page)
+	items, err := feature.Repository.GetListMovieRepository(request.Limit, offset)
+	if err != nil {
+		return
+	}
+	return model.ResGetListMovie{
+		Pagination: model.Pagination{
+			Limit:     request.Limit,
+			Page:      request.Page,
+			TotalPage: totalPage,
+			TotalRows: int(totalData),
+		},
+		Data: items,
+	}, nil
 }

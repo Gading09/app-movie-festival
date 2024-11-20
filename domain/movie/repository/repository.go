@@ -4,6 +4,7 @@ import (
 	"movie-festival/domain/movie/model"
 	"movie-festival/helper/constant"
 	e "movie-festival/helper/response/error"
+	"strings"
 
 	"gorm.io/gorm"
 )
@@ -26,6 +27,8 @@ type MovieRepository interface {
 		movieArtist []model.MovieArtists,
 	) (err error)
 	TopViewedMovieRepository() (res model.TopViewed, err error)
+	GetTotalDataRepository() (count int64, err error)
+	GetListMovieRepository(limit, offset int) (res []model.GetListMovie, err error)
 }
 
 type movieRepository struct {
@@ -201,5 +204,48 @@ func (repo movieRepository) TopViewedMovieRepository() (res model.TopViewed, err
 		Movie: mostVotedMovie,
 		Genre: mostViewedGenre,
 	}
+	return
+}
+
+func (repo movieRepository) GetTotalDataRepository() (count int64, err error) {
+	if err = repo.Database.Model(&model.Movie{}).Count(&count).Error; err != nil {
+		err = e.New(constant.StatusInternalServerError, constant.ErrDatabase, err)
+		return
+	}
+	return
+}
+
+func (repo movieRepository) GetListMovieRepository(limit, offset int) (res []model.GetListMovie, err error) {
+	rows, err := repo.Database.Table("movies").
+		Select(`movies.id, movies.title, movies.created_at, 
+                GROUP_CONCAT(DISTINCT genres.name) AS genre_names, 
+                GROUP_CONCAT(DISTINCT artists.name) AS artist_names`).
+		Joins("JOIN movie_genres ON movies.id = movie_genres.movie_id").
+		Joins("JOIN genres ON movie_genres.genre_id = genres.id").
+		Joins("JOIN movie_artists ON movies.id = movie_artists.movie_id").
+		Joins("JOIN artists ON movie_artists.artist_id = artists.id").
+		Group("movies.id").
+		Limit(limit).
+		Offset(offset).
+		Rows()
+	if err != nil {
+		err = e.New(constant.StatusInternalServerError, constant.ErrDatabase, err)
+		return
+	}
+	defer rows.Close()
+	for rows.Next() {
+		var movie model.GetListMovie
+		var genreNames string
+		var artistNames string
+		if err = rows.Scan(&movie.Id, &movie.Title, &movie.CreatedAt, &genreNames, &artistNames); err != nil {
+			err = e.New(constant.StatusInternalServerError, constant.ErrDatabase, err)
+			return
+		}
+
+		movie.Genre = strings.Split(genreNames, ",")
+		movie.Artist = strings.Split(artistNames, ",")
+		res = append(res, movie)
+	}
+
 	return
 }

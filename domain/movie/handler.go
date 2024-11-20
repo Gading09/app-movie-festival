@@ -22,6 +22,7 @@ type MovieHandler interface {
 	CreateMovie(c *fiber.Ctx) error
 	UpdateMovie(c *fiber.Ctx) error
 	TopViewedMovie(c *fiber.Ctx) error
+	GetListMovie(c *fiber.Ctx) error
 }
 
 type movieHandler struct {
@@ -155,4 +156,16 @@ func (handler movieHandler) TopViewedMovie(c *fiber.Ctx) error {
 		return response.ResponseError(c, err)
 	}
 	return response.ResponseOK(c, http.StatusOK, constant.GetSuccess, data)
+}
+
+func (handler movieHandler) GetListMovie(c *fiber.Ctx) error {
+	req := model.ReqGetListMovie{
+		Page:  c.QueryInt("page"),
+		Limit: c.QueryInt("limit"),
+	}
+	data, err := handler.Feature.GetListMovieFeature(&req)
+	if err != nil {
+		return response.ResponseError(c, err)
+	}
+	return response.ResponseOK(c, http.StatusCreated, constant.CreateSuccess, data)
 }
