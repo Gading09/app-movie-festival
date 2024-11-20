@@ -19,6 +19,7 @@ type MovieFeature interface {
 	WatchMovieFeature(id string) (res model.WatchMovie, err error)
 	VoteMovieFeature(userId, movieId string) (err error)
 	UnvoteMovieFeature(userId, movieId string) (err error)
+	VotedMovieFeature(userId string) (res []model.Voted, err error)
 }
 
 type movieFeature struct {
@@ -205,4 +206,8 @@ func (feature movieFeature) UnvoteMovieFeature(userId, movieId string) (err erro
 		UserId:  userId,
 		MovieId: movieId,
 	})
+}
+
+func (feature movieFeature) VotedMovieFeature(userId string) (res []model.Voted, err error) {
+	return feature.Repository.VotedMovieRepository(userId)
 }

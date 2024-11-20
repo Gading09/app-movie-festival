@@ -29,6 +29,7 @@ func RegisterPath(app *fiber.App, h Handler, cache *bigcache.BigCache) {
 		movie.Get("/:movieId/watch", h.MovieHandler.WatchMovie)
 		movie.Post("/:movieId/vote", middleware.CheckTokenExpire(cache), h.MovieHandler.VoteMovie)
 		movie.Post("/:movieId/unvote", middleware.CheckTokenExpire(cache), h.MovieHandler.UnvoteMovie)
+		movie.Get("/voted", middleware.CheckTokenExpire(cache), h.MovieHandler.VotedMovie)
 	}
 
 	app.Get("/video/*", h.MovieHandler.Video)

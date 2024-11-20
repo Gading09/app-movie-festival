@@ -29,6 +29,7 @@ type MovieHandler interface {
 	Video(c *fiber.Ctx) error
 	VoteMovie(c *fiber.Ctx) error
 	UnvoteMovie(c *fiber.Ctx) error
+	VotedMovie(c *fiber.Ctx) error
 }
 
 type movieHandler struct {
@@ -229,4 +230,19 @@ func (handler movieHandler) UnvoteMovie(c *fiber.Ctx) error {
 		return response.ResponseError(c, err)
 	}
 	return response.ResponseOK(c, http.StatusOK, constant.Success, nil)
+}
+
+func (handler movieHandler) VotedMovie(c *fiber.Ctx) error {
+	UserContext := c.UserContext()
+	payloadToken := UserContext.Value(constant.DATA_TOKEN).(middleware.DataUserToken)
+	userId := payloadToken.Profile.Id
+	if userId == "" {
+		err := e.New(constant.StatusBadRequest, constant.ErrAuth, nil)
+		return response.ResponseError(c, err)
+	}
+	data, err := handler.Feature.VotedMovieFeature(userId)
+	if err != nil {
+		return response.ResponseError(c, err)
+	}
+	return response.ResponseOK(c, http.StatusOK, constant.GetSuccess, data)
 }

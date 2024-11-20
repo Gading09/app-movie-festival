@@ -34,6 +34,7 @@ type MovieRepository interface {
 	IncViewMovieRepository(id string) (err error)
 	VoteMovieRepository(payload model.Vote) (err error)
 	UnvoteMovieRepository(payload model.Vote) (err error)
+	VotedMovieRepository(userId string) (res []model.Voted, err error)
 }
 
 type movieRepository struct {
@@ -332,5 +333,16 @@ func (repo movieRepository) UnvoteMovieRepository(payload model.Vote) (err error
 		err = e.New(constant.StatusInternalServerError, constant.ErrDatabase, err)
 		return
 	}
+	return
+}
+
+func (repo movieRepository) VotedMovieRepository(userId string) (res []model.Voted, err error) {
+	if err = repo.Database.Table("votes").
+		Select(`movies.id as movie_id, movies.title, votes.created_at`).
+		Joins("JOIN movies ON votes.movie_id = movies.id").Find(&res).Error; err != nil {
+		err = e.New(constant.StatusInternalServerError, constant.ErrDatabase, err)
+		return
+	}
+
 	return
 }

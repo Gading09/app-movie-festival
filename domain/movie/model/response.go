@@ -50,3 +50,9 @@ type WatchMovie struct {
 	WatchUrl  string `json:"watch_url"`
 	ViewCount int    `json:"view_count"`
 }
+
+type Voted struct {
+	MovieId   string    `json:"movie_id"`
+	Title     string    `json:"title"`
+	CreatedAt time.Time `json:"created_at"`
+}
