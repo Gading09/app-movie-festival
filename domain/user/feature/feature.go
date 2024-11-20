@@ -14,6 +14,7 @@ import (
 
 type UserFeature interface {
 	RegisterUserFeature(request *model.ReqUser) (err error)
+	LoginFeature(request *model.ReqLogin) (token model.ResLogin, err error)
 }
 
 type userFeature struct {
@@ -43,4 +44,36 @@ func (feature userFeature) RegisterUserFeature(request *model.ReqUser) (err erro
 		IsAdmin:   *request.IsAdmin,
 	}
 	return feature.Repository.RegisterUserRepository(payload)
+}
+
+func (feature userFeature) LoginFeature(request *model.ReqLogin) (res model.ResLogin, err error) {
+	user, err := feature.Repository.GetUserByEmailRepository(request.Email)
+	if err != nil {
+		return
+	}
+	err = j.ComparePassword(user.Password, request.Password)
+	if err != nil {
+		err = e.New(constant.StatusBadRequest, constant.ErrAuth, err)
+		return
+	}
+	token, err := j.GenerateToken(map[string]interface{}{
+		"profile": map[string]interface{}{
+			"id":       user.Id,
+			"username": user.Username,
+			"email":    user.Email,
+			"isAdmin":  user.IsAdmin,
+		},
+	}, time.Duration(1)*time.Hour)
+	if err != nil {
+		err = e.New(constant.StatusBadRequest, constant.ErrDefault, err)
+		return
+	}
+	err = feature.Cache.Set(user.Id, []byte(token))
+	if err != nil {
+		err = e.New(constant.StatusBadRequest, constant.ErrDefault, err)
+		return
+	}
+	return model.ResLogin{
+		Token: token,
+	}, nil
 }

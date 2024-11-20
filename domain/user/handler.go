@@ -14,6 +14,7 @@ import (
 
 type UserHandler interface {
 	RegisterUser(c *fiber.Ctx) error
+	Login(c *fiber.Ctx) error
 }
 
 type userHandler struct {
@@ -41,4 +42,21 @@ func (handler userHandler) RegisterUser(c *fiber.Ctx) error {
 		return response.ResponseError(c, err)
 	}
 	return response.ResponseOK(c, http.StatusCreated, constant.CreateSuccess, nil)
+}
+
+func (handler userHandler) Login(c *fiber.Ctx) error {
+	login := new(model.ReqLogin)
+	if err := c.BodyParser(login); err != nil {
+		err = e.New(constant.StatusBadRequest, constant.ErrInvalidRequest, err)
+		return response.ResponseError(c, err)
+	}
+	if err, check := validator.Validation(login); check {
+		err = e.New(constant.StatusBadRequest, constant.ErrValidator, err)
+		return response.ResponseError(c, err)
+	}
+	token, err := handler.Feature.LoginFeature(login)
+	if err != nil {
+		return response.ResponseError(c, err)
+	}
+	return response.ResponseOK(c, http.StatusCreated, constant.GetSuccess, token)
 }

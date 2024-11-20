@@ -11,6 +11,7 @@ import (
 
 type UserRepository interface {
 	RegisterUserRepository(payload model.User) (err error)
+	GetUserByEmailRepository(email string) (user model.User, err error)
 }
 
 type userRepository struct {
@@ -33,4 +34,12 @@ func (repo userRepository) RegisterUserRepository(payload model.User) (err error
 		return err
 	}
 	return nil
+}
+
+func (repo userRepository) GetUserByEmailRepository(email string) (user model.User, err error) {
+	if err = repo.Database.Where("email = ?", email).Find(&user).Error; err != nil {
+		err = e.New(constant.StatusInternalServerError, constant.ErrDatabase, err)
+		return
+	}
+	return
 }
