@@ -14,4 +14,9 @@ func RegisterPath(app *fiber.App, h Handler, cache *bigcache.BigCache) {
 		user.Post("/login", h.UserHandler.Login)
 		user.Post("/logout", middleware.CheckTokenExpire(cache), h.UserHandler.Logout)
 	}
+
+	admin := app.Group("/admin")
+	{
+		admin.Post("/movie", middleware.CheckTokenExpire(cache), middleware.IsAdmin(), h.MovieHandler.CreateMovie)
+	}
 }

@@ -14,6 +14,7 @@ const (
 const (
 	Error             = "Error"
 	ErrDatabase       = "error database"
+	ErrUnmarshal      = "Error unmarshal"
 	ErrAlreadyExist   = "error already exist"
 	ErrInvalidRequest = "invalid request"
 	ErrNotFound       = "error not fount"
