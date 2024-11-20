@@ -1,6 +1,7 @@
 package user
 
 import (
+	"movie-festival/delivery/http/middleware"
 	"movie-festival/domain/user/feature"
 	"movie-festival/domain/user/model"
 	"movie-festival/helper/constant"
@@ -15,6 +16,7 @@ import (
 type UserHandler interface {
 	RegisterUser(c *fiber.Ctx) error
 	Login(c *fiber.Ctx) error
+	Logout(c *fiber.Ctx) error
 }
 
 type userHandler struct {
@@ -59,4 +61,19 @@ func (handler userHandler) Login(c *fiber.Ctx) error {
 		return response.ResponseError(c, err)
 	}
 	return response.ResponseOK(c, http.StatusCreated, constant.GetSuccess, token)
+}
+
+func (handler userHandler) Logout(c *fiber.Ctx) error {
+	UserContext := c.UserContext()
+	payloadToken := UserContext.Value(constant.DATA_TOKEN).(middleware.DataUserToken)
+	userId := payloadToken.Profile.Id
+	if userId == "" {
+		err := e.New(constant.StatusBadRequest, constant.ErrAuth, nil)
+		return response.ResponseError(c, err)
+	}
+	err := handler.Feature.LogoutFeature(userId)
+	if err != nil {
+		return response.ResponseError(c, err)
+	}
+	return response.ResponseOK(c, http.StatusOK, constant.Success, nil)
 }

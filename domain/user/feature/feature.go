@@ -15,6 +15,7 @@ import (
 type UserFeature interface {
 	RegisterUserFeature(request *model.ReqUser) (err error)
 	LoginFeature(request *model.ReqLogin) (token model.ResLogin, err error)
+	LogoutFeature(userId string) (err error)
 }
 
 type userFeature struct {
@@ -76,4 +77,8 @@ func (feature userFeature) LoginFeature(request *model.ReqLogin) (res model.ResL
 	return model.ResLogin{
 		Token: token,
 	}, nil
+}
+
+func (feature userFeature) LogoutFeature(userId string) (err error) {
+	return feature.Cache.Delete(userId)
 }
