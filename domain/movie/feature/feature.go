@@ -17,6 +17,7 @@ type MovieFeature interface {
 	GetListMovieFeature(request *model.ReqGetListMovie) (res model.ResGetListMovie, err error)
 	GetListMovieBySearchFeature(search string) (res model.ResGetListMovieBySearch, err error)
 	WatchMovieFeature(id string) (res model.WatchMovie, err error)
+	VoteMovieFeature(userId, movieId string) (err error)
 }
 
 type movieFeature struct {
@@ -188,4 +189,12 @@ func (feature movieFeature) WatchMovieFeature(id string) (res model.WatchMovie, 
 		WatchUrl:  fmt.Sprintf(`localhost/video/%s`, data.WatchURL[10:]),
 		ViewCount: data.ViewCount + 1,
 	}, nil
+}
+
+func (feature movieFeature) VoteMovieFeature(userId, movieId string) (err error) {
+	return feature.Repository.VoteMovieRepository(model.Vote{
+		UserId:    userId,
+		MovieId:   movieId,
+		CreatedAt: time.Now(),
+	})
 }

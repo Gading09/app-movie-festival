@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"movie-festival/delivery/http/middleware"
 	"movie-festival/domain/movie/feature"
 	"movie-festival/domain/movie/model"
 	"movie-festival/helper/constant"
@@ -26,6 +27,7 @@ type MovieHandler interface {
 	GetListMovieBySearch(c *fiber.Ctx) error
 	WatchMovie(c *fiber.Ctx) error
 	Video(c *fiber.Ctx) error
+	VoteMovie(c *fiber.Ctx) error
 }
 
 type movieHandler struct {
@@ -194,4 +196,20 @@ func (handler movieHandler) WatchMovie(c *fiber.Ctx) error {
 func (handler movieHandler) Video(c *fiber.Ctx) error {
 	videoPath := c.Params("*")
 	return c.SendFile("uploads/" + videoPath)
+}
+
+func (handler movieHandler) VoteMovie(c *fiber.Ctx) error {
+	movieId := c.Params("movieId")
+	UserContext := c.UserContext()
+	payloadToken := UserContext.Value(constant.DATA_TOKEN).(middleware.DataUserToken)
+	userId := payloadToken.Profile.Id
+	if userId == "" {
+		err := e.New(constant.StatusBadRequest, constant.ErrAuth, nil)
+		return response.ResponseError(c, err)
+	}
+	err := handler.Feature.VoteMovieFeature(userId, movieId)
+	if err != nil {
+		return response.ResponseError(c, err)
+	}
+	return response.ResponseOK(c, http.StatusCreated, constant.GetSuccess, nil)
 }

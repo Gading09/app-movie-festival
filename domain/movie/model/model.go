@@ -34,3 +34,9 @@ type MovieArtists struct {
 	MovieId  string
 	ArtistId string
 }
+
+type Vote struct {
+	UserId    string `gorm:"size:100;not null;uniqueIndex:idx_vote"`
+	MovieId   string `gorm:"size:100;not null;uniqueIndex:idx_vote"`
+	CreatedAt time.Time
+}

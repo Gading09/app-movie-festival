@@ -32,6 +32,7 @@ type MovieRepository interface {
 	GetListMovieBySearchRepository(search string) (res []model.GetListMovie, err error)
 	GetMovieByIdRepository(id string) (res model.Movie, err error)
 	IncViewMovieRepository(id string) (err error)
+	VoteMovieRepository(payload model.Vote) (err error)
 }
 
 type movieRepository struct {
@@ -309,5 +310,18 @@ func (repo movieRepository) IncViewMovieRepository(id string) (err error) {
 		}
 		return err
 	}
+	return
+}
+
+func (repo movieRepository) VoteMovieRepository(payload model.Vote) (err error) {
+	if err = repo.Database.Create(&payload).Error; err != nil {
+		if strings.Contains(err.Error(), "Duplicate") {
+			err = e.New(constant.StatusInternalServerError, constant.ErrAlreadyExist, err)
+			return
+		}
+		err = e.New(constant.StatusInternalServerError, constant.ErrDatabase, err)
+		return
+	}
+
 	return
 }
