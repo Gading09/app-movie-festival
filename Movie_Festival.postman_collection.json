@@ -221,101 +221,6 @@
 					"response": []
 				},
 				{
-					"name": "Create Movie",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{token}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "movie",
-									"value": "{\"title\": \"End Game\",\"description\": \"Fighting with Thanos\",\"genres\": [\"action\", \"cinta\"],\"artists\": [\"hedy\"],\"duration\":\"300\"}",
-									"type": "text"
-								},
-								{
-									"key": "video",
-									"type": "file",
-									"src": "/Users/hedygadingaprilliyanto/Downloads/4/Slide_2.mp4"
-								}
-							]
-						},
-						"url": {
-							"raw": "http://127.0.0.1:9001/admin/movie",
-							"protocol": "http",
-							"host": [
-								"127",
-								"0",
-								"0",
-								"1"
-							],
-							"port": "9001",
-							"path": [
-								"admin",
-								"movie"
-							]
-						},
-						"description": "Generated from cURL: curl -X POST http://localhost:3000/upload \\\n  -H \"Content-Type: multipart/form-data\" \\\n  -F \"movie={\\\"movie_title\\\":\\\"Movie Title\\\",\\\"description\\\":\\\"This is a description of the movie.\\\",\\\"genres\\\":\\\"Action,Adventure\\\",\\\"artists\\\":\\\"Artist 1,Artist 2\\\"}\" \\\n  -F \"video=@path_to_video_file.mp4\"\n"
-					},
-					"response": []
-				},
-				{
-					"name": "Update Movie",
-					"request": {
-						"method": "PUT",
-						"header": [],
-						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "movie",
-									"value": "{\"title\": \"End w\",\"description\": \"Fighting w Thanos\",\"genres\": [ \"cinta\"],\"artists\": [\"hedy\"],\"duration\":\"30\",\"url\":\"./uploads/5180f53b-c6c3-4243-8c93-5b77333e2bce.mp4\"}",
-									"type": "text"
-								},
-								{
-									"key": "video",
-									"type": "file",
-									"src": "/Users/hedygadingaprilliyanto/Downloads/4/Slide_2.mp4"
-								}
-							]
-						},
-						"url": {
-							"raw": "http://127.0.0.1:9001/admin/movie/:movieId",
-							"protocol": "http",
-							"host": [
-								"127",
-								"0",
-								"0",
-								"1"
-							],
-							"port": "9001",
-							"path": [
-								"admin",
-								"movie",
-								":movieId"
-							],
-							"variable": [
-								{
-									"key": "movieId",
-									"value": "1d3567a9-efef-4fc1-b85f-54c29e483519"
-								}
-							]
-						},
-						"description": "Generated from cURL: curl -X POST http://localhost:3000/upload \\\n  -H \"Content-Type: multipart/form-data\" \\\n  -F \"movie={\\\"movie_title\\\":\\\"Movie Title\\\",\\\"description\\\":\\\"This is a description of the movie.\\\",\\\"genres\\\":\\\"Action,Adventure\\\",\\\"artists\\\":\\\"Artist 1,Artist 2\\\"}\" \\\n  -F \"video=@path_to_video_file.mp4\"\n"
-					},
-					"response": []
-				},
-				{
 					"name": "Watch",
 					"request": {
 						"method": "GET",
@@ -455,6 +360,106 @@
 								"voted"
 							]
 						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Admin",
+			"item": [
+				{
+					"name": "Create Movie",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "movie",
+									"value": "{\"title\": \"End Game\",\"description\": \"Fighting with Thanos\",\"genres\": [\"action\", \"cinta\"],\"artists\": [\"hedy\"],\"duration\":\"300\"}",
+									"type": "text"
+								},
+								{
+									"key": "video",
+									"type": "file",
+									"src": "/Users/hedygadingaprilliyanto/Downloads/4/Slide_2.mp4"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://127.0.0.1:9001/admin/movie",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "9001",
+							"path": [
+								"admin",
+								"movie"
+							]
+						},
+						"description": "Generated from cURL: curl -X POST http://localhost:3000/upload \\\n  -H \"Content-Type: multipart/form-data\" \\\n  -F \"movie={\\\"movie_title\\\":\\\"Movie Title\\\",\\\"description\\\":\\\"This is a description of the movie.\\\",\\\"genres\\\":\\\"Action,Adventure\\\",\\\"artists\\\":\\\"Artist 1,Artist 2\\\"}\" \\\n  -F \"video=@path_to_video_file.mp4\"\n"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Movie",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "movie",
+									"value": "{\"title\": \"End w\",\"description\": \"Fighting w Thanos\",\"genres\": [ \"cinta\"],\"artists\": [\"hedy\"],\"duration\":\"30\",\"url\":\"./uploads/5180f53b-c6c3-4243-8c93-5b77333e2bce.mp4\"}",
+									"type": "text"
+								},
+								{
+									"key": "video",
+									"type": "file",
+									"src": "/Users/hedygadingaprilliyanto/Downloads/4/Slide_2.mp4"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://127.0.0.1:9001/admin/movie/:movieId",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "9001",
+							"path": [
+								"admin",
+								"movie",
+								":movieId"
+							],
+							"variable": [
+								{
+									"key": "movieId",
+									"value": "1d3567a9-efef-4fc1-b85f-54c29e483519"
+								}
+							]
+						},
+						"description": "Generated from cURL: curl -X POST http://localhost:3000/upload \\\n  -H \"Content-Type: multipart/form-data\" \\\n  -F \"movie={\\\"movie_title\\\":\\\"Movie Title\\\",\\\"description\\\":\\\"This is a description of the movie.\\\",\\\"genres\\\":\\\"Action,Adventure\\\",\\\"artists\\\":\\\"Artist 1,Artist 2\\\"}\" \\\n  -F \"video=@path_to_video_file.mp4\"\n"
 					},
 					"response": []
 				},
