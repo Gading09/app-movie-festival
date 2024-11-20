@@ -1,0 +1,497 @@
+{
+	"info": {
+		"_postman_id": "db976e7d-5b1f-4c73-90ce-343d1865ac6b",
+		"name": "Lion Parcel",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "11376391"
+	},
+	"item": [
+		{
+			"name": "User",
+			"item": [
+				{
+					"name": "Registration",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\": \"hedy\",\n    \"password\": \"hedy\",\n    \"email\" : \"hedy@gmail.com\",\n    \"isAdmin\": true\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:9001/user/registration",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "9001",
+							"path": [
+								"user",
+								"registration"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var response = pm.response.json();",
+									"",
+									"// Simpan token ke variabel lingkungan jika ditemukan",
+									"if (response.status === \"Success\" && response.data && response.data.token) {",
+									"    pm.environment.set(\"token\", response.data.token);",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"password\": \"hedy\",\n    \"email\" : \"hedy@gmail.com\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:9001/user/login",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "9001",
+							"path": [
+								"user",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Logout",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:9001/user/logout",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "9001",
+							"path": [
+								"user",
+								"logout"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Movie",
+			"item": [
+				{
+					"name": "Get List",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://127.0.0.1:9001/movie?page=1&limit=4",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "9001",
+							"path": [
+								"movie"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "limit",
+									"value": "4"
+								}
+							]
+						},
+						"description": "Generated from cURL: curl -X POST http://localhost:3000/upload \\\n  -H \"Content-Type: multipart/form-data\" \\\n  -F \"movie={\\\"movie_title\\\":\\\"Movie Title\\\",\\\"description\\\":\\\"This is a description of the movie.\\\",\\\"genres\\\":\\\"Action,Adventure\\\",\\\"artists\\\":\\\"Artist 1,Artist 2\\\"}\" \\\n  -F \"video=@path_to_video_file.mp4\"\n"
+					},
+					"response": []
+				},
+				{
+					"name": "Get List By Search",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://127.0.0.1:9001/movie/search?search=",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "9001",
+							"path": [
+								"movie",
+								"search"
+							],
+							"query": [
+								{
+									"key": "search",
+									"value": ""
+								}
+							]
+						},
+						"description": "Generated from cURL: curl -X POST http://localhost:3000/upload \\\n  -H \"Content-Type: multipart/form-data\" \\\n  -F \"movie={\\\"movie_title\\\":\\\"Movie Title\\\",\\\"description\\\":\\\"This is a description of the movie.\\\",\\\"genres\\\":\\\"Action,Adventure\\\",\\\"artists\\\":\\\"Artist 1,Artist 2\\\"}\" \\\n  -F \"video=@path_to_video_file.mp4\"\n"
+					},
+					"response": []
+				},
+				{
+					"name": "Create Movie",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "movie",
+									"value": "{\"title\": \"End Game\",\"description\": \"Fighting with Thanos\",\"genres\": [\"action\", \"cinta\"],\"artists\": [\"hedy\"],\"duration\":\"300\"}",
+									"type": "text"
+								},
+								{
+									"key": "video",
+									"type": "file",
+									"src": "/Users/hedygadingaprilliyanto/Downloads/4/Slide_2.mp4"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://127.0.0.1:9001/admin/movie",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "9001",
+							"path": [
+								"admin",
+								"movie"
+							]
+						},
+						"description": "Generated from cURL: curl -X POST http://localhost:3000/upload \\\n  -H \"Content-Type: multipart/form-data\" \\\n  -F \"movie={\\\"movie_title\\\":\\\"Movie Title\\\",\\\"description\\\":\\\"This is a description of the movie.\\\",\\\"genres\\\":\\\"Action,Adventure\\\",\\\"artists\\\":\\\"Artist 1,Artist 2\\\"}\" \\\n  -F \"video=@path_to_video_file.mp4\"\n"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Movie",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "movie",
+									"value": "{\"title\": \"End w\",\"description\": \"Fighting w Thanos\",\"genres\": [ \"cinta\"],\"artists\": [\"hedy\"],\"duration\":\"30\",\"url\":\"./uploads/5180f53b-c6c3-4243-8c93-5b77333e2bce.mp4\"}",
+									"type": "text"
+								},
+								{
+									"key": "video",
+									"type": "file",
+									"src": "/Users/hedygadingaprilliyanto/Downloads/4/Slide_2.mp4"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://127.0.0.1:9001/admin/movie/:movieId",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "9001",
+							"path": [
+								"admin",
+								"movie",
+								":movieId"
+							],
+							"variable": [
+								{
+									"key": "movieId",
+									"value": "1d3567a9-efef-4fc1-b85f-54c29e483519"
+								}
+							]
+						},
+						"description": "Generated from cURL: curl -X POST http://localhost:3000/upload \\\n  -H \"Content-Type: multipart/form-data\" \\\n  -F \"movie={\\\"movie_title\\\":\\\"Movie Title\\\",\\\"description\\\":\\\"This is a description of the movie.\\\",\\\"genres\\\":\\\"Action,Adventure\\\",\\\"artists\\\":\\\"Artist 1,Artist 2\\\"}\" \\\n  -F \"video=@path_to_video_file.mp4\"\n"
+					},
+					"response": []
+				},
+				{
+					"name": "Watch",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:9001/movie/:movieId/watch",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "9001",
+							"path": [
+								"movie",
+								":movieId",
+								"watch"
+							],
+							"variable": [
+								{
+									"key": "movieId",
+									"value": "74c1396e-1b9c-4926-9523-fbb4c4abad6f"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Vote",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:9001/movie/:movieId/vote",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "9001",
+							"path": [
+								"movie",
+								":movieId",
+								"vote"
+							],
+							"variable": [
+								{
+									"key": "movieId",
+									"value": "5180f53b-c6c3-4243-8c93-5b77333e2bce"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Unvote",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:9001/movie/:movie/unvote",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "9001",
+							"path": [
+								"movie",
+								":movie",
+								"unvote"
+							],
+							"variable": [
+								{
+									"key": "movie",
+									"value": "5180f53b-c6c3-4243-8c93-5b77333e2bce"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Voted",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:9001/movie/voted",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "9001",
+							"path": [
+								"movie",
+								"voted"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Top Viewed",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:9001/admin/top-viewed",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "9001",
+							"path": [
+								"admin",
+								"top-viewed"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
