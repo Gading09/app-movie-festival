@@ -23,6 +23,8 @@ type MovieHandler interface {
 	UpdateMovie(c *fiber.Ctx) error
 	TopViewedMovie(c *fiber.Ctx) error
 	GetListMovie(c *fiber.Ctx) error
+	GetListMovieBySearch(c *fiber.Ctx) error
+	WatchMovie(c *fiber.Ctx) error
 }
 
 type movieHandler struct {
@@ -164,6 +166,24 @@ func (handler movieHandler) GetListMovie(c *fiber.Ctx) error {
 		Limit: c.QueryInt("limit"),
 	}
 	data, err := handler.Feature.GetListMovieFeature(&req)
+	if err != nil {
+		return response.ResponseError(c, err)
+	}
+	return response.ResponseOK(c, http.StatusCreated, constant.CreateSuccess, data)
+}
+
+func (handler movieHandler) GetListMovieBySearch(c *fiber.Ctx) error {
+	search := c.Query("search")
+	data, err := handler.Feature.GetListMovieBySearchFeature(search)
+	if err != nil {
+		return response.ResponseError(c, err)
+	}
+	return response.ResponseOK(c, http.StatusCreated, constant.CreateSuccess, data)
+}
+
+func (handler movieHandler) WatchMovie(c *fiber.Ctx) error {
+	id := c.Params("movieId")
+	data, err := handler.Feature.WatchMovieFeature(id)
 	if err != nil {
 		return response.ResponseError(c, err)
 	}

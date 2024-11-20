@@ -39,3 +39,14 @@ type ResGetListMovie struct {
 	Pagination Pagination     `json:"pagination"`
 	Data       []GetListMovie `json:"data"`
 }
+
+type ResGetListMovieBySearch struct {
+	Data []GetListMovie `json:"data"`
+}
+
+type WatchMovie struct {
+	Id        string `json:"id"`
+	Title     string `json:"title"`
+	WatchUrl  string `json:"watch_url"`
+	ViewCount int    `json:"view_count"`
+}

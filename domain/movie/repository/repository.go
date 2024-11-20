@@ -29,6 +29,9 @@ type MovieRepository interface {
 	TopViewedMovieRepository() (res model.TopViewed, err error)
 	GetTotalDataRepository() (count int64, err error)
 	GetListMovieRepository(limit, offset int) (res []model.GetListMovie, err error)
+	GetListMovieBySearchRepository(search string) (res []model.GetListMovie, err error)
+	GetMovieByIdRepository(id string) (res model.Movie, err error)
+	IncViewMovieRepository(id string) (err error)
 }
 
 type movieRepository struct {
@@ -247,5 +250,64 @@ func (repo movieRepository) GetListMovieRepository(limit, offset int) (res []mod
 		res = append(res, movie)
 	}
 
+	return
+}
+
+func (repo movieRepository) GetListMovieBySearchRepository(search string) (res []model.GetListMovie, err error) {
+	query := repo.Database.Table("movies").
+		Select(`movies.id, movies.title, movies.created_at, movies.description, 
+                GROUP_CONCAT(distinct genres.name) AS genre_names, 
+                GROUP_CONCAT(distinct artists.name) AS artist_names`).
+		Joins("JOIN movie_genres ON movies.id = movie_genres.movie_id").
+		Joins("JOIN genres ON movie_genres.genre_id = genres.id").
+		Joins("JOIN movie_artists ON movies.id = movie_artists.movie_id").
+		Joins("JOIN artists ON movie_artists.artist_id = artists.id").
+		Group("movies.id")
+
+	if search != "" {
+		query = query.Having("movies.title LIKE ? OR movies.description LIKE ? OR artist_names LIKE ? OR genre_names LIKE ?",
+			"%"+search+"%", "%"+search+"%", "%"+search+"%", "%"+search+"%")
+	}
+
+	rows, err := query.Rows()
+	if err != nil {
+		err = e.New(constant.StatusInternalServerError, constant.ErrDatabase, err)
+		return
+
+	}
+
+	for rows.Next() {
+		var movie model.GetListMovie
+		var genreNames string
+		var artistNames string
+		if err = rows.Scan(&movie.Id, &movie.Title, &movie.CreatedAt, &movie.Description, &genreNames, &artistNames); err != nil {
+			err = e.New(constant.StatusInternalServerError, constant.ErrDatabase, err)
+			return
+		}
+
+		movie.Genre = strings.Split(genreNames, ",")
+		movie.Artist = strings.Split(artistNames, ",")
+		res = append(res, movie)
+	}
+	defer rows.Close()
+	return
+}
+
+func (repo movieRepository) GetMovieByIdRepository(id string) (res model.Movie, err error) {
+	if err = repo.Database.First(&res, "id = ?", id).Error; err != nil {
+		err = e.New(constant.StatusInternalServerError, constant.ErrDatabase, err)
+		return
+	}
+	return
+}
+
+func (repo movieRepository) IncViewMovieRepository(id string) (err error) {
+	if err = repo.Database.Model(&model.Movie{}).Where("id = ?", id).Update("view_count", gorm.Expr("view_count + ?", 1)).Error; err != nil {
+		if strings.Contains(err.Error(), "not found") {
+			err = e.New(constant.StatusNotFound, constant.ErrNotFound, err)
+			return
+		}
+		return err
+	}
 	return
 }

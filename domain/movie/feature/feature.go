@@ -1,6 +1,7 @@
 package feature
 
 import (
+	"fmt"
 	"movie-festival/domain/movie/model"
 	"movie-festival/domain/movie/repository"
 	"movie-festival/helper"
@@ -14,6 +15,8 @@ type MovieFeature interface {
 	UpdateMovieFeature(request *model.ReqUpdateMovie) (err error)
 	TopViewedMovieFeature() (res model.TopViewed, err error)
 	GetListMovieFeature(request *model.ReqGetListMovie) (res model.ResGetListMovie, err error)
+	GetListMovieBySearchFeature(search string) (res model.ResGetListMovieBySearch, err error)
+	WatchMovieFeature(id string) (res model.WatchMovie, err error)
 }
 
 type movieFeature struct {
@@ -157,5 +160,32 @@ func (feature movieFeature) GetListMovieFeature(request *model.ReqGetListMovie) 
 			TotalRows: int(totalData),
 		},
 		Data: items,
+	}, nil
+}
+
+func (feature movieFeature) GetListMovieBySearchFeature(search string) (res model.ResGetListMovieBySearch, err error) {
+	items, err := feature.Repository.GetListMovieBySearchRepository(search)
+	if err != nil {
+		return
+	}
+	res.Data = items
+	return
+}
+
+func (feature movieFeature) WatchMovieFeature(id string) (res model.WatchMovie, err error) {
+	data, err := feature.Repository.GetMovieByIdRepository(id)
+	if err != nil {
+		return
+	}
+	err = feature.Repository.IncViewMovieRepository(id)
+	if err != nil {
+		return
+	}
+
+	return model.WatchMovie{
+		Id:        id,
+		Title:     data.Title,
+		WatchUrl:  fmt.Sprintf(`localhost/video/%s`, data.WatchURL[10:]),
+		ViewCount: data.ViewCount + 1,
 	}, nil
 }
